@@ -68,7 +68,7 @@ class TestPRS(object):
 
 
 
-#----------------------------------------------------------------------以下为账单模块--------------------------------------------------------------------------
+    #----------------------------------------------------------------------以下为账单模块--------------------------------------------------------------------------
 
     def tongHangZhangDan(self): #同行账单
         try:
@@ -932,6 +932,7 @@ class TestPRS(object):
             logFile.write(u"------网点关系查询 测试通过Success！------\n")
 
 
+    # ----------------------------------------------------------------------以下为基础模块--------------------------------------------------------------------------
     def yeWuGuiZeLeiXing(self):   #业务规则类型
         try:
             logFile.write(u"------ 业务规则类型 开始执行：------\n")
@@ -945,68 +946,68 @@ class TestPRS(object):
             time.sleep(1)
             assert u"业务规则名称:" in self.driver.page_source,u"业务规则名称-断言失败" #添加断言
 
-            for i in xrange(2): #设置循环
-                #测试 新增 功能
-                yeWuGuiZeBiaoHao = "autoTest" + str(i)
-                self.driver.find_element_by_partial_link_text(u'新增').click()       #点击 新增
-                time.sleep(2)
-                self.driver.find_element_by_id('_easyui_textbox_input2').send_keys(yeWuGuiZeBiaoHao)  #业务规则编码 输入测试内容
-                time.sleep(1)
-                self.driver.find_element_by_id('_easyui_textbox_input3').send_keys(u'自动化测试')    #业务规则名称 输入测试内容
-                time.sleep(1)
-                #定义变量 参数类型
-                canShuLeiXing =  self.driver.find_element_by_xpath('//*[@id="formBusiness"]/table/tbody/tr[3]/td[2]/span/span/a')
-                canShuLeiXing.click()    #点击参数类型下拉框
-                time.sleep(1)
-                self.driver.find_element_by_id('_easyui_combobox_i1_1').click()     #选择下拉内容 布尔型
-                time.sleep(1)
-                baoCun = self.driver.find_element_by_link_text(u'保存')   #定义变量 保存
-                baoCun.click()        #点击 保存
-                time.sleep(2)
-
-                #在查询条件中输入业务规则编号
-                chaXunTiaoJian = self.driver.find_element_by_id('_easyui_textbox_input1')   #定义查询条件 变量
-                chaXunTiaoJian.clear()      #清空查询条件
-                time.sleep(1)
-                chaXunTiaoJian.send_keys(yeWuGuiZeBiaoHao) #在查询条件中输入编号
-                time.sleep(1)
-                chaXun = self.driver.find_element_by_link_text(u'查询')
-                chaXun.click()    #点击 查询
-                time.sleep(1)
-                # 添加断言 判断是否新增成功
-                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text == yeWuGuiZeBiaoHao,u"新增失败"
-                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u"布尔型",u"新增失败"
-                time.sleep(1)
-
-                #测试 修改 功能
-                self.driver.find_element_by_name('id').click()      #点击 勾选
-                time.sleep(1)
-                self.driver.find_element_by_partial_link_text(u'修改').click()    #点击 修改
-                time.sleep(2)
-                canShuLeiXing.click()   #点击 参数类型
-                time.sleep(1)
-                self.driver.find_element_by_id('_easyui_combobox_i1_5').click()     #修改为 字符型
-                time.sleep(1)
-                baoCun.click()  #点击 保存
-                time.sleep(2)
-                chaXun.click()  #点击 查询
-                time.sleep(1)
-                #添加断言 判断是否修改成功
-                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u'字符型',u"修改失败"
-                time.sleep(1)
-
-                #测试 删除 功能
-                self.driver.find_element_by_name('id').click()      #点击 勾选
-                time.sleep(1)
-                self.driver.find_element_by_partial_link_text(u'删除').click()    #点击 删除
-                time.sleep(2)
-                self.driver.find_element_by_partial_link_text(u'确定').click()    #点击 确定
-                time.sleep(2)
-                chaXun.click()  #点击 查询
-                time.sleep(1)
-                #添加断言 判断是否删除成功
-                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text != yeWuGuiZeBiaoHao,u"删除失败"
-                time.sleep(1)
+            # for i in xrange(2): #设置循环
+            #     #测试 新增 功能
+            #     yeWuGuiZeBiaoHao = "autoTest" + str(i)
+            #     self.driver.find_element_by_partial_link_text(u'新增').click()       #点击 新增
+            #     time.sleep(2)
+            #     self.driver.find_element_by_id('_easyui_textbox_input2').send_keys(yeWuGuiZeBiaoHao)  #业务规则编码 输入测试内容
+            #     time.sleep(1)
+            #     self.driver.find_element_by_id('_easyui_textbox_input3').send_keys(u'自动化测试')    #业务规则名称 输入测试内容
+            #     time.sleep(1)
+            #     #定义变量 参数类型
+            #     canShuLeiXing =  self.driver.find_element_by_xpath('//*[@id="formBusiness"]/table/tbody/tr[3]/td[2]/span/span/a')
+            #     canShuLeiXing.click()    #点击参数类型下拉框
+            #     time.sleep(1)
+            #     self.driver.find_element_by_id('_easyui_combobox_i1_1').click()     #选择下拉内容 布尔型
+            #     time.sleep(1)
+            #     baoCun = self.driver.find_element_by_link_text(u'保存')   #定义变量 保存
+            #     baoCun.click()        #点击 保存
+            #     time.sleep(2)
+            #
+            #     #在查询条件中输入业务规则编号
+            #     chaXunTiaoJian = self.driver.find_element_by_id('_easyui_textbox_input1')   #定义查询条件 变量
+            #     chaXunTiaoJian.clear()      #清空查询条件
+            #     time.sleep(1)
+            #     chaXunTiaoJian.send_keys(yeWuGuiZeBiaoHao) #在查询条件中输入编号
+            #     time.sleep(1)
+            #     chaXun = self.driver.find_element_by_link_text(u'查询')
+            #     chaXun.click()    #点击 查询
+            #     time.sleep(1)
+            #     # 添加断言 判断是否新增成功
+            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text == yeWuGuiZeBiaoHao,u"新增失败"
+            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u"布尔型",u"新增失败"
+            #     time.sleep(1)
+            #
+            #     #测试 修改 功能
+            #     self.driver.find_element_by_name('id').click()      #点击 勾选
+            #     time.sleep(1)
+            #     self.driver.find_element_by_partial_link_text(u'修改').click()    #点击 修改
+            #     time.sleep(2)
+            #     canShuLeiXing.click()   #点击 参数类型
+            #     time.sleep(1)
+            #     self.driver.find_element_by_id('_easyui_combobox_i1_5').click()     #修改为 字符型
+            #     time.sleep(1)
+            #     baoCun.click()  #点击 保存
+            #     time.sleep(2)
+            #     chaXun.click()  #点击 查询
+            #     time.sleep(1)
+            #     #添加断言 判断是否修改成功
+            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u'字符型',u"修改失败"
+            #     time.sleep(1)
+            #
+            #     #测试 删除 功能
+            #     self.driver.find_element_by_name('id').click()      #点击 勾选
+            #     time.sleep(1)
+            #     self.driver.find_element_by_partial_link_text(u'删除').click()    #点击 删除
+            #     time.sleep(2)
+            #     self.driver.find_element_by_partial_link_text(u'确定').click()    #点击 确定
+            #     time.sleep(2)
+            #     chaXun.click()  #点击 查询
+            #     time.sleep(1)
+            #     #添加断言 判断是否删除成功
+            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text != yeWuGuiZeBiaoHao,u"删除失败"
+            #     time.sleep(1)
 
 
             #关闭业务规则类型界面
@@ -1161,3 +1162,111 @@ class TestPRS(object):
             logFile.write(u"业务规则设置 失败Fail:\n" + traceback.format_exc() + "\n")
         else:
             logFile.write(u"------业务规则设置 测试通过Success！------\n")
+
+
+
+    def huiLvWeiHu(self):   #汇率维护
+        try:
+            logFile.write(u"------ 汇率维护 开始执行：------\n")
+            self.driver.switch_to.default_content()     #跳转进入默认iframe内
+            time.sleep(1)
+            self.driver.find_element_by_partial_link_text(u'汇率维护').click()    #点击 汇率维护
+            time.sleep(2)
+            self.driver.switch_to.frame('indextab120')  #跳转到 汇率维护 iframe内
+            time.sleep(1)
+            assert u"返回今天" in self.driver.page_source,u"返回今天-断言失败" #添加断言
+
+            #切换到汇率列表
+            self.driver.find_element_by_link_text(u'汇率列表').click()
+            time.sleep(1)
+
+
+            #使用js删除 属性
+            #删除 查询条件-原始货币的只读属性
+            delReadonly = "document.getElementById('_easyui_textbox_input6').removeAttribute('readonly')"
+            self.driver.execute_script(delReadonly)     #调用execute_script方法 执行js语句
+            time.sleep(1)
+            #定义变量-查询条件原始货币
+            chaXunYuanShiHuoBi = self.driver.find_element_by_id('_easyui_textbox_input6')
+            chaXunYuanShiHuoBi.click()
+            time.sleep(0.5)
+            #使用循坏9次，选中 英镑
+            for i in range(9):
+                chaXunYuanShiHuoBi.send_keys(Keys.ARROW_DOWN)   #模拟键盘按键-下
+                time.sleep(0.2)
+            chaXunYuanShiHuoBi.send_keys(Keys.ENTER)    #模拟键盘按键-回车
+            time.sleep(0.5)
+
+            #使用js添加 属性
+            #添加查询条件-原始货币的只读属性
+            addReadonly = "document.getElementById('_easyui_textbox_input6').setAttribute('readonly','readonly')"
+            self.driver.execute_script(addReadonly)
+            time.sleep(0.5)
+
+            # 定义 查询
+            chaXun = self.driver.find_element_by_link_text(u'查询')
+            chaXun.click()  #点击 查询
+            time.sleep(2)
+
+
+            #测试 新增模块
+            self.driver.find_element_by_partial_link_text(u'新增').click()    #点击 新增 按钮
+            time.sleep(2)
+
+            # 使用js删除 -原始货币的只读属性
+            delReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').removeAttribute('readonly')"
+            self.driver.execute_script(delReadonlyXinZheng)  # 调用execute_script方法 执行js语句
+            time.sleep(1)
+            # 定义变量-查询条件原始货币
+            chaXunYuanShiHuoBiXinZheng = self.driver.find_element_by_id('_easyui_textbox_input7')
+            chaXunYuanShiHuoBiXinZheng.click()
+            time.sleep(0.5)
+            # 使用循坏9次，选中 英镑
+            for i in range(9):
+                chaXunYuanShiHuoBiXinZheng.send_keys(Keys.ARROW_DOWN)  # 模拟键盘按键-下
+                time.sleep(0.2)
+            chaXunYuanShiHuoBiXinZheng.send_keys(Keys.ENTER)  # 模拟键盘按键-回车
+            time.sleep(0.5)
+
+            # 使用js添加 属性
+            # 添加查询条件-原始货币的只读属性
+            addReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').setAttribute('readonly','readonly')"
+            self.driver.execute_script(addReadonlyXinZheng)
+            time.sleep(0.5)
+
+            #汇率输入框中输入值
+            huiLv = self.driver.find_element_by_id('_easyui_textbox_input1')
+            huiLv.send_keys('8')
+            time.sleep(1)
+            #生效日期
+            shengXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input3')
+            shengXiaoRiQi.send_keys('2018-12-01')   #输入生效日期
+            time.sleep(1)
+            #点击汇率输入框，便于选中生效日期值
+            huiLv.click()
+            time.sleep(1)
+            #失效日期
+            shiXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input4')
+            shiXiaoRiQi.clear() #清空
+            shiXiaoRiQi.send_keys('2018-12-12') #输入失效日期
+            time.sleep(1)
+            #点击汇率输入框，便于选中失效日期值
+            huiLv.click()
+            time.sleep(1)
+            #点击 保存 按钮
+            baoCun = self.driver.find_element_by_link_text(u'保存')
+            baoCun.click()
+            time.sleep(2)
+
+
+
+
+
+
+
+        except NoSuchElementException,e:
+            logFile.write(u"汇率维护 失败Fail:\n" + traceback.format_exc() + "\n")
+        except Exception,e:
+            logFile.write(u"汇率维护 失败Fail:\n" + traceback.format_exc() + "\n")
+        else:
+            logFile.write(u"------汇率维护 测试通过Success！------\n")
