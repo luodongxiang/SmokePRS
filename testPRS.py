@@ -3,7 +3,8 @@ from selenium import webdriver  #导入webdriver模块
 from selenium.webdriver.common.keys import Keys #导入Keys模块
 from selenium.common.exceptions import NoSuchElementException   #导入异常类
 import traceback    #导入traceback堆栈异常类
-import time
+import time     #导入time模块
+import datetime     #导入日期模块
 import sys  #导入sys系统模块
 reload(sys) #重新加载sys模块
 sys.setdefaultencoding("utf-8") #设置系统默认编码方式为“utf-8”方式
@@ -1338,9 +1339,9 @@ class TestPRS(object):
             #使用循坏9次，选中 英镑
             for i in range(9):
                 chaXunYuanShiHuoBi.send_keys(Keys.ARROW_DOWN)   #模拟键盘按键-下
-                time.sleep(0.2)
+                time.sleep(0.1)
             chaXunYuanShiHuoBi.send_keys(Keys.ENTER)    #模拟键盘按键-回车
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             # #使用js添加 属性
             # #添加查询条件-原始货币的只读属性
@@ -1356,7 +1357,7 @@ class TestPRS(object):
 
             #测试 新增模块
             self.driver.find_element_by_partial_link_text(u'新增').click()    #点击 新增 按钮
-            time.sleep(2)
+            time.sleep(1)
 
             # 使用js删除 -原始货币的只读属性
             delReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').removeAttribute('readonly')"
@@ -1369,9 +1370,9 @@ class TestPRS(object):
             # 使用循坏9次，选中 英镑
             for i in range(9):
                 chaXunYuanShiHuoBiXinZheng.send_keys(Keys.ARROW_DOWN)  # 模拟键盘按键-下
-                time.sleep(0.2)
+                time.sleep(0.1)
             chaXunYuanShiHuoBiXinZheng.send_keys(Keys.ENTER)  # 模拟键盘按键-回车
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             # # 使用js添加 属性
             # # 添加查询条件-原始货币的只读属性
@@ -1383,25 +1384,34 @@ class TestPRS(object):
             huiLv = self.driver.find_element_by_id('_easyui_textbox_input1')
             huiLv.send_keys('8')
             time.sleep(1)
-            #生效日期
+            #生效日期元素定位
             shengXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input3')
-            shengXiaoRiQi.send_keys('2018-12-01')   #输入生效日期
-            time.sleep(1)
-            #点击汇率输入框，便于选中生效日期值
-            huiLv.click()
-            time.sleep(1)
-            #失效日期
+            # 失效日期元素定位
             shiXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input4')
-            shiXiaoRiQi.clear() #清空
-            shiXiaoRiQi.send_keys('2018-12-12') #输入失效日期
-            time.sleep(1)
-            #点击汇率输入框，便于选中失效日期值
-            huiLv.click()
-            time.sleep(1)
-            #定义 保存 按钮
+            # 定义 保存 按钮
             baoCun = self.driver.find_element_by_link_text(u'保存')
-            baoCun.click()  #点击保存
-            time.sleep(2)
+            #使用循环
+            for i in xrange(5):
+                # 定义测试日期-如果保存失败，则日期自加1，继续保存
+                ceShiDate = (datetime.datetime.now() + datetime.timedelta(days=i)).strftime("%Y-%m-%d")
+                shengXiaoRiQi.clear()   #清空 生效日期
+                shengXiaoRiQi.send_keys(ceShiDate)   #输入生效日期
+                time.sleep(1)
+                #点击汇率输入框，便于选中生效日期值
+                huiLv.click()
+                time.sleep(1)
+                shiXiaoRiQi.clear() #清空 失效日期
+                shiXiaoRiQi.send_keys(ceShiDate) #输入 失效日期
+                time.sleep(1)
+                #点击汇率输入框，便于选中失效日期值
+                huiLv.click()
+                time.sleep(1)
+                baoCun.click()  #点击保存
+                time.sleep(3)
+                # if  self.driver.find_element_by_partial_link_text(u'取消') == False:
+                #     break
+                # if self.driver.find_element(by=)
+
 
             #添加断言对新增结果进行判断
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[8]/div').text == "8",u"汇率断言失败"
