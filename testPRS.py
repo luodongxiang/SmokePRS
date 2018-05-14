@@ -10,7 +10,8 @@ sys.setdefaultencoding("utf-8") #设置系统默认编码方式为“utf-8”方
 
 
 class TestPRS(object):
-    def __init__(self): #定义init方法
+    # 定义init方法
+    def __init__(self):
         try:
             global logFile  # 将日志文件logFile定义为全局变量
             logFile = open("log", "w")  # 定义文件对象
@@ -32,8 +33,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------TestPRS类实例化init方法测试通过Success！------\n")
 
-
-    def login(self):    #登录界面
+    # 登录界面
+    def login(self):
         try:
             username = "019404"  # 定义登录用户名-总部身份
             password = "UC48690&"  # 定义登录密码
@@ -53,8 +54,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------登录界面测试通过Success！------\n")
 
-
-    def quitBrowser(self):  #退出浏览器
+    # 退出浏览器
+    def quitBrowser(self):
         try:
             self.driver.quit()  #退出浏览器
         except Exception,e:
@@ -66,11 +67,25 @@ class TestPRS(object):
             logFile.write("\n" + time.asctime() + "  ----------------------------------------------  Test Over   ----------------------------------------------\n\n\n")
             logFile.close()
 
+    #关闭 标签页
+    def closeTagPage(self):
+        try:
+            # 关闭 标签页
+            self.driver.switch_to.default_content()  # 跳回到默认iframe内——关闭标签页一定要跳出账单的iframe
+            # 方法一：使用js语句关闭
+            js = "document.getElementsByClassName('tabs-close')[0].click()"
+            self.driver.execute_script(js)  # 调用execute_script()方法
+            # #方法二：使用xpath方式定位
+            # self.driver.find_element_by_xpath('//*[@id="mainTab"]/div[1]/div[3]/ul/li[2]/a[2]').click()
+            time.sleep(2)
+
+        except Exception, e:
+            logFile.write(u"关闭标签页执行失败Fail:\n" + traceback.format_exc() + "\n")
 
 
     #----------------------------------------------------------------------以下为账单模块--------------------------------------------------------------------------
-
-    def tongHangZhangDan(self): #同行账单
+    # 同行账单
+    def tongHangZhangDan(self):
         try:
             logFile.write(u"------同行账单开始执行：------\n")
             # 打开同行账单界面
@@ -82,7 +97,7 @@ class TestPRS(object):
             time.sleep(3)
 
             # 进入同行账单测试
-            self.driver.switch_to.frame(self.driver.find_element_by_id('indextab261'))  # 跳转到iframe内
+            self.driver.switch_to.frame(u'indextabPRS同行出货账单编辑')  # 跳转到iframe内
             assert u"同行所属网点" in self.driver.page_source,u"同行所属网点断言失败"  # 断言“同行所属网点”是否在页面源码中
             #设置变量chaXun
             chaXun = self.driver.find_element_by_link_text(u'查询')   #通过文本链接元素定位
@@ -166,15 +181,8 @@ class TestPRS(object):
             # time.sleep(3)
 
 
-            # 关闭 同行账单标签页
-            self.driver.switch_to.default_content()     #跳回到默认iframe内——关闭标签页一定要跳出同行账单的iframe
-            #方法一：使用js语句关闭
-            js = "document.getElementsByClassName('tabs-close')[0].click()"
-            self.driver.execute_script(js)  #调用execute_script()方法
-            # #方法二：使用xpath方式定位
-            # self.driver.find_element_by_xpath('//*[@id="mainTab"]/div[1]/div[3]/ul/li[2]/a[2]').click()
-            time.sleep(2)
-
+            #关闭标签页
+            self.closeTagPage()
 
         except NoSuchElementException,e:
             logFile.write(u"同行账单执行失败Fail:\n" + traceback.format_exc() + "\n")
@@ -185,18 +193,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------同行账单测试通过Success！------\n")
 
-
-    def yiErJiJiJianZhangDan(self): #一二级网点寄件账单
+    # 一二级网点寄件账单
+    def yiErJiJiJianZhangDan(self):
         try:
             logFile.write(u"------一二级网点寄件账单开始执行：------\n")
             self.driver.switch_to.default_content() #跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_xpath('//*[@id="229"]/a').click()   #点击一二级网点寄件账单
             time.sleep(2)
-            self.driver.switch_to.frame('indextab229')  #跳转到一二级寄件账单iframe内
+            self.driver.switch_to.frame(u'indextabPRS一二级网点寄件账单')  #跳转到一二级寄件账单iframe内
             time.sleep(1)
             self.driver.find_element_by_xpath('//*[@id="formFindDictType"]/div/div[2]/table/tbody/tr[4]/td[3]/a/span').click()  #点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"一二级寄件账单失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -204,18 +216,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------一二级网点寄件账单测试通过Success！------\n")
 
-
-    def yiErJiPaiJianZhangDan(self):    #一二级派件账单
+    # 一二级派件账单
+    def yiErJiPaiJianZhangDan(self):
         try:
             logFile.write(u"------一二级网点派件账单开始执行：------\n")
             self.driver.switch_to.default_content() #跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_xpath('//*[@id="230"]/a').click()   #点击一二级网点派件账单
             time.sleep(2)
-            self.driver.switch_to.frame('indextab230')  #跳转到一二级派件账单iframe内
+            self.driver.switch_to.frame(u'indextabPRS一二级网点派件账单')  #跳转到一二级派件账单iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"一二级派件账单失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -223,8 +239,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------一二级派件账单测试通过Success！------\n")
 
-
-    def zhangDanBianJi(self):    #账单编辑
+    # 账单编辑
+    def zhangDanBianJi(self):
         try:
             logFile.write(u"------账单编辑开始执行：------\n")
             self.driver.switch_to.default_content() #跳回到默认iframe框架内
@@ -233,10 +249,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'账单编辑').click()  #点击账单编辑
             time.sleep(2)
-            self.driver.switch_to.frame('indextab205')  #跳转到账单编辑iframe内
+            self.driver.switch_to.frame(u'indextabPRS账单编辑')  #跳转到账单编辑iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"账单编辑失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -244,18 +264,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------账单编辑测试通过Success！------\n")
 
-
-    def shiXiaoPaiFeiPaiJianZhangDan(self):  #时效派费派件账单
+    # 时效派费派件账单
+    def shiXiaoPaiFeiPaiJianZhangDan(self):
         try:
             logFile.write(u"------时效派费派件账单开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u"时效派费派件账单").click()  # 点击 时效派费派件账单
             time.sleep(2)
-            self.driver.switch_to.frame('indextab1000026001')  # 跳转到时效派费派件账单iframe内
+            self.driver.switch_to.frame(u'indextabPRS时效派费派件账单')  # 跳转到时效派费派件账单iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"时效派费派件账单失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -263,18 +287,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------时效派费派件账单测试通过Success！------\n")
 
-
-    def wangDianChuHuoDuiZhang(self):  #网点出货对账
+    # 网点出货对账
+    def wangDianChuHuoDuiZhang(self):
         try:
             logFile.write(u"------网点出货对账开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u"网点出货对账").click()  # 点击 网点出货对账
             time.sleep(2)
-            self.driver.switch_to.frame('indextab208')  # 跳转到网点出货对账iframe内
+            self.driver.switch_to.frame(u'indextabPRS网点出货对账')  # 跳转到网点出货对账iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"网点出货对账失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -282,18 +310,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------网点出货对账测试通过Success！------\n")
 
-
-    def wangDianPaiJianDuiZhang(self):  #网点派件对账
+    # 网点派件对账
+    def wangDianPaiJianDuiZhang(self):
         try:
             logFile.write(u"------网点派件对账开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u"网点派件对账").click()  # 点击 网点派件对账
             time.sleep(2)
-            self.driver.switch_to.frame('indextab220')  # 跳转到网点派件对账iframe内
+            self.driver.switch_to.frame(u'indextabPRS网点派件对账')  # 跳转到网点派件对账iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"网点派件对账失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -301,18 +333,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------网点派件对账测试通过Success！------\n")
 
-
-    def zhangDanTiaoZheng(self):  #账单调整
+    # 账单调整
+    def zhangDanTiaoZheng(self):
         try:
             logFile.write(u"------账单调整开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u"账单调整").click()  # 点击 账单调整
             time.sleep(2)
-            self.driver.switch_to.frame('indextab330')  # 跳转到账单调整iframe内
+            self.driver.switch_to.frame(u'indextabPRS账单调整')  # 跳转到账单调整iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"账单调整失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -320,8 +356,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------账单调整测试通过Success！------\n")
 
-
-    def zhiDaPaiFeiZhangDanBianJi(self):  #直达派费账单编辑
+    # 直达派费账单编辑
+    def zhiDaPaiFeiZhangDanBianJi(self):
         try:
             logFile.write(u"------直达派费账单编辑开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -330,10 +366,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'直达派费账单编辑').click()  #点击 直达派费账单编辑
             time.sleep(2)
-            self.driver.switch_to.frame('indextab260')  # 跳转到直达派费账单编辑iframe内
+            self.driver.switch_to.frame(u'indextabPRS直达派费账单编辑')  # 跳转到直达派费账单编辑iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"直达派费账单编辑失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -341,18 +381,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------直达派费账单编辑测试通过Success！------\n")
 
-
-    def zhiDaPaiFeiJieSuanChaXun(self):  #直达派费结算查询
+    # 直达派费结算查询
+    def zhiDaPaiFeiJieSuanChaXun(self):
         try:
             logFile.write(u"------直达派费结算查询开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'直达派费结算查询').click()  #点击 直达派费结算查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab259')  # 跳转到直达派费结算查询iframe内
+            self.driver.switch_to.frame(u'indextabPRS直达派费结算查询')  # 跳转到直达派费结算查询iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"直达派费结算查询失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -360,8 +404,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------直达派费结算查询测试通过Success！------\n")
 
-
-    def zhongZhuanZhangDanChaXun(self):  #中转账单查询
+    # 中转账单查询
+    def zhongZhuanZhangDanChaXun(self):
         try:
             logFile.write(u"------中转账单查询开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -370,10 +414,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'中转账单查询').click()  #点击 中转账单查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab327')  # 跳转到中转账单查询iframe内
+            self.driver.switch_to.frame(u'indextabPRS中转账单查询')  # 跳转到中转账单查询iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"中转账单查询失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -381,18 +429,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------中转账单查询测试通过Success！------\n")
 
-
-    def zhongZhuanZhangDanJieSuan(self):  #中转账单结算
+    # 中转账单结算
+    def zhongZhuanZhangDanJieSuan(self):
         try:
             logFile.write(u"------中转账单结算开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'中转账单结算').click()  #点击 中转账单结算
             time.sleep(2)
-            self.driver.switch_to.frame('indextab328')  # 跳转到中转账单结算iframe内
+            self.driver.switch_to.frame(u'indextabPRS中转账单结算')  # 跳转到中转账单结算iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"中转账单结算失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -400,8 +452,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------中转账单结算测试通过Success！------\n")
 
-
-    def guDingFeiYongKouKuan(self):  #固定费用扣款
+    # 固定费用扣款
+    def guDingFeiYongKouKuan(self):
         try:
             logFile.write(u"------固定费用扣款开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -410,10 +462,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'固定费用扣款').click()    #点击 固定费用扣款
             time.sleep(2)
-            self.driver.switch_to.frame('indextab235')  # 跳转到固定费用扣款iframe内
+            self.driver.switch_to.frame(u'indextabPRS固定费用扣款')  # 跳转到固定费用扣款iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"固定费用扣款失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -421,18 +477,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------固定费用扣款测试通过Success！------\n")
 
-
-    def guDingFeiYongMingXiWeiHu(self):  #固定费用明细维护
+    # 固定费用明细维护
+    def guDingFeiYongMingXiWeiHu(self):
         try:
             logFile.write(u"------固定费用明细维护开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'固定费用明细维护').click()    #点击 固定费用明细维护
             time.sleep(2)
-            self.driver.switch_to.frame('indextab236')  # 跳转到固定费用明细维护iframe内
+            self.driver.switch_to.frame(u'indextabPRS固定费用明细维护')  # 跳转到固定费用明细维护iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"固定费用明细维护失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -440,18 +500,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------固定费用明细维护测试通过Success！------\n")
 
-
-    def guDingFeiYongKouKuanJiLu(self):  #固定费用扣款记录
+    # 固定费用扣款记录
+    def guDingFeiYongKouKuanJiLu(self):
         try:
             logFile.write(u"------固定费用扣款记录开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'固定费用扣款记录').click()    #点击 固定费用扣款记录
             time.sleep(2)
-            self.driver.switch_to.frame('indextab237')  # 跳转到固定费用扣款记录iframe内
+            self.driver.switch_to.frame(u'indextabPRS固定费用扣款记录')  # 跳转到固定费用扣款记录iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"固定费用扣款记录失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -459,18 +523,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------固定费用扣款记录测试通过Success！------\n")
 
-
-    def xiTongShiYongFeiZhangDan(self):  #系统使用费账单
+    # 系统使用费账单
+    def xiTongShiYongFeiZhangDan(self):
         try:
             logFile.write(u"------系统使用费账单开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'系统使用费账单').click()    #点击 系统使用费账单
             time.sleep(2)
-            self.driver.switch_to.frame('indextab198')  # 跳转到系统使用费账单iframe内
+            self.driver.switch_to.frame(u'indextabPRS系统使用费账单')  # 跳转到系统使用费账单iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"系统使用费账单失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -478,8 +546,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------系统使用费账单测试通过Success！------\n")
 
-
-    def daiShouKuanJiFangWangDian(self):  #代收款账单编辑(寄方网点)
+    # 代收款账单编辑(寄方网点)
+    def daiShouKuanJiFangWangDian(self):
         try:
             logFile.write(u"------ 代收款账单编辑(寄方网点) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -488,10 +556,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款账单编辑(寄方网点)').click()     #点击 代收款账单编辑(寄方网点)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab160')  # 跳转到 代收款账单编辑(寄方网点) iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款账单编辑(寄方网点)')  # 跳转到 代收款账单编辑(寄方网点) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款账单编辑(寄方网点) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -499,18 +571,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款账单编辑(寄方网点) 测试通过Success！------\n")
 
-
-    def daiShouKuanJiFangZhongXin(self):  #代收款账单编辑(寄方中心)
+    # 代收款账单编辑(寄方中心)
+    def daiShouKuanJiFangZhongXin(self):
         try:
             logFile.write(u"------ 代收款账单编辑(寄方中心) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款账单编辑(寄方中心)').click()     #点击 代收款账单编辑(寄方中心)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab207')  # 跳转到 代收款账单编辑(寄方网点) iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款账单编辑(寄方中心)')  # 跳转到 代收款账单编辑(寄方网点) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款账单编辑(寄方中心) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -518,18 +594,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款账单编辑(寄方中心) 测试通过Success！------\n")
 
-
-    def daiShouKuanPaiFangZhongXin(self):  #代收款账单编辑(派方中心)
+    # 代收款账单编辑(派方中心)
+    def daiShouKuanPaiFangZhongXin(self):
         try:
             logFile.write(u"------ 代收款账单编辑(派方中心) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款账单编辑(派方中心)').click()     #点击 代收款账单编辑(派方中心)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab209')  # 跳转到 代收款账单编辑(派方中心) iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款账单编辑(派方中心)')  # 跳转到 代收款账单编辑(派方中心) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款账单编辑(派方中心) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -537,18 +617,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款账单编辑(派方中心) 测试通过Success！------\n")
 
-
-    def daiShouKuanPaiFangWangDian(self):  #代收款账单编辑(派方网点)
+    # 代收款账单编辑(派方网点)
+    def daiShouKuanPaiFangWangDian(self):
         try:
             logFile.write(u"------ 代收款账单编辑(派方网点) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款账单编辑(派方网点)').click()     #点击 代收款账单编辑(派方网点)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab210')  # 跳转到 代收款账单编辑(派方网点) iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款账单编辑(派方网点)')  # 跳转到 代收款账单编辑(派方网点) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款账单编辑(派方网点) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -556,8 +640,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款账单编辑(派方网点) 测试通过Success！------\n")
 
-
-    def daiShouKuanZhiTuiShenDan(self):  #代收款直退审单
+    # 代收款直退审单
+    def daiShouKuanZhiTuiShenDan(self):
         try:
             logFile.write(u"------ 代收款直退审单 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -566,10 +650,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款直退审单').click()     #点击 代收款直退审单
             time.sleep(2)
-            self.driver.switch_to.frame('indextab216')  # 跳转到 代收款直退审单 iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款直退审单')  # 跳转到 代收款直退审单 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款直退审单 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -577,18 +665,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款直退审单 测试通过Success！------\n")
 
-
-    def daiShouKuanZhiTuiDengJi(self):  #代收款直退登记
+    # 代收款直退登记
+    def daiShouKuanZhiTuiDengJi(self):
         try:
             logFile.write(u"------ 代收款直退登记 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款直退登记').click()     #点击 代收款直退登记
             time.sleep(2)
-            self.driver.switch_to.frame('indextab219')  # 跳转到 代收款直退登记 iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款直退登记')  # 跳转到 代收款直退登记 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款直退登记 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -596,18 +688,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款直退登记 测试通过Success！------\n")
 
-
-    def daiShouKuanZhiTuiShenHe(self):  #代收款直退审核
+    # 代收款直退审核
+    def daiShouKuanZhiTuiShenHe(self):
         try:
             logFile.write(u"------ 代收款直退审核 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款直退审核').click()     #点击 代收款直退审核
             time.sleep(2)
-            self.driver.switch_to.frame('indextab222')  # 跳转到 代收款直退审核 iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款直退审核')  # 跳转到 代收款直退审核 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款直退审核 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -615,18 +711,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款直退审核 测试通过Success！------\n")
 
-
-    def daiShouKuanZhiTuiChaXun(self):  #代收款直退查询
+    # 代收款直退查询
+    def daiShouKuanZhiTuiChaXun(self):
         try:
             logFile.write(u"------ 代收款直退查询 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收款直退查询').click()     #点击 代收款直退查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab238')  # 跳转到 代收款直退查询 iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收款直退查询')  # 跳转到 代收款直退查询 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收款直退查询 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -634,18 +734,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收款直退查询 测试通过Success！------\n")
 
-
-    def daiShouDuiZhangChaXun(self):  #代收对账单查询
+    # 代收对账单查询
+    def daiShouDuiZhangChaXun(self):
         try:
             logFile.write(u"------ 代收对账单查询 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'代收对账单查询').click()     #点击 代收对账单查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab324')  # 跳转到 代收对账单查询 iframe内
+            self.driver.switch_to.frame(u'indextabPRS代收对账单查询')  # 跳转到 代收对账单查询 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"代收对账单查询 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -653,8 +757,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------代收对账单查询 测试通过Success！------\n")
 
-
-    def daoFuKuanJiFangWangDian(self):  #到付款账单编辑(寄方网点)
+    # 到付款账单编辑(寄方网点)
+    def daoFuKuanJiFangWangDian(self):
         try:
             logFile.write(u"------ 到付款账单编辑(寄方网点) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
@@ -663,10 +767,14 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'到付款账单编辑(寄方网点)').click()     #点击 到付款账单编辑(寄方网点)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab280')  # 跳转到 到付款账单编辑(寄方网点) iframe内
+            self.driver.switch_to.frame(u'indextabPRS到付款账单编辑(寄方网点)')  # 跳转到 到付款账单编辑(寄方网点) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"到付款账单编辑(寄方网点) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -674,18 +782,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------到付款账单编辑(寄方网点) 测试通过Success！------\n")
 
-
-    def daoFuKuanJiFangZhongXin(self):  #到付款账单编辑(寄方中心)
+    # 到付款账单编辑(寄方中心)
+    def daoFuKuanJiFangZhongXin(self):
         try:
             logFile.write(u"------ 到付款账单编辑(寄方中心) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'到付款账单编辑(寄方中心)').click()     #点击 到付款账单编辑(寄方中心)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab281')  # 跳转到 到付款账单编辑(寄方中心) iframe内
+            self.driver.switch_to.frame(u'indextabPRS到付款账单编辑(寄方中心)')  # 跳转到 到付款账单编辑(寄方中心) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"到付款账单编辑(寄方中心) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -693,18 +805,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------到付款账单编辑(寄方中心) 测试通过Success！------\n")
 
-
-    def daoFuKuanPaiFangWangDian(self):  #到付款账单编辑(派方网点)
+    # 到付款账单编辑(派方网点)
+    def daoFuKuanPaiFangWangDian(self):
         try:
             logFile.write(u"------ 到付款账单编辑(派方网点) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'到付款账单编辑(派方网点)').click()     #点击 到付款账单编辑(派方网点)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab282')  # 跳转到 到付款账单编辑(派方网点) iframe内
+            self.driver.switch_to.frame(u'indextabPRS到付款账单编辑(派方网点)')  # 跳转到 到付款账单编辑(派方网点) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"到付款账单编辑(派方网点) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -712,18 +828,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------到付款账单编辑(派方网点) 测试通过Success！------\n")
 
-
-    def daoFuKuanPaiFangZhongXin(self):  #到付款账单编辑(派方中心)
+    # 到付款账单编辑(派方中心)
+    def daoFuKuanPaiFangZhongXin(self):
         try:
             logFile.write(u"------ 到付款账单编辑(派方中心) 开始执行：------\n")
             self.driver.switch_to.default_content()  # 跳回到默认iframe框架内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'到付款账单编辑(派方中心)').click()     #点击 到付款账单编辑(派方中心)
             time.sleep(2)
-            self.driver.switch_to.frame('indextab283')  # 跳转到 到付款账单编辑(派方中心) iframe内
+            self.driver.switch_to.frame(u'indextabPRS到付款账单编辑(派方中心)')  # 跳转到 到付款账单编辑(派方中心) iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()  # 点击查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException, e:
             logFile.write(u"到付款账单编辑(派方中心) 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception, e:
@@ -731,8 +851,8 @@ class TestPRS(object):
         else:
             logFile.write(u"------到付款账单编辑(派方中心) 测试通过Success！------\n")
 
-
-    def feiYongTiaoZhengDengJi(self):   #费用调整登记
+    # 费用调整登记
+    def feiYongTiaoZhengDengJi(self):
         try:
             logFile.write(u"------ 费用调整登记 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
@@ -741,7 +861,7 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'费用调整登记').click()    #点击 费用调整登记
             time.sleep(2)
-            self.driver.switch_to.frame('indextab223')  #跳转到 费用调整 iframe内
+            self.driver.switch_to.frame(u'indextabPRS费用调整登记')  #跳转到 费用调整 iframe内
             time.sleep(1)
             self.driver.find_element_by_id('add').click()   #点击 添加
             time.sleep(2)
@@ -770,7 +890,8 @@ class TestPRS(object):
             # jieShouFang.send_keys(Keys.ARROW_DOWN)
             # time.sleep(1)
 
-
+            #关闭标签页
+            self.closeTagPage()
 
         except NoSuchElementException,e:
             logFile.write(u"费用调整登记 失败Fail:\n" + traceback.format_exc() + "\n")
@@ -779,18 +900,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------费用调整登记 测试通过Success！------\n")
 
-
-    def feiYongTiaoZhengJieShouFangQueRen(self):   #费用调整接收方确认
+    # 费用调整接收方确认
+    def feiYongTiaoZhengJieShouFangQueRen(self):
         try:
             logFile.write(u"------ 费用调整接收方确认 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'费用调整接收方确认').click()    #点击 费用调整接收方确认
             time.sleep(2)
-            self.driver.switch_to.frame('indextab224')  #跳转到 费用调整接收方确认 iframe内
+            self.driver.switch_to.frame(u'indextabPRS费用调整接收方确认')  #跳转到 费用调整接收方确认 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"费用调整接收方确认 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -798,18 +923,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------费用调整接收方确认 测试通过Success！------\n")
 
-
-    def feiYongTiaoZhengDengJiFangChaXun(self):   #费用调整登记方查询
+    # 费用调整登记方查询
+    def feiYongTiaoZhengDengJiFangChaXun(self):
         try:
             logFile.write(u"------ 费用调整登记方查询 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'费用调整登记方查询').click()    #点击 费用调整登记方查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab225')  #跳转到 费用调整登记方查询 iframe内
+            self.driver.switch_to.frame(u'indextabPRS费用调整登记方查询')  #跳转到 费用调整登记方查询 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"费用调整登记方查询 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -817,18 +946,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------费用调整登记方查询 测试通过Success！------\n")
 
-
-    def feiYongTiaoZhengShenHeKouKuan(self):   #费用调整审核扣款（接收方中心）
+    # 费用调整审核扣款（接收方中心）
+    def feiYongTiaoZhengShenHeKouKuan(self):
         try:
             logFile.write(u"------ 费用调整审核扣款（接收方中心） 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'费用调整审核扣款').click()    #点击 费用调整审核扣款（接收方中心）
             time.sleep(2)
-            self.driver.switch_to.frame('indextab226')  #跳转到 费用调整审核扣款（接收方中心） iframe内
+            self.driver.switch_to.frame(u'indextabPRS费用调整审核扣款（接收方中心）')  #跳转到 费用调整审核扣款（接收方中心） iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"费用调整审核扣款（接收方中心） 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -836,18 +969,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------费用调整审核扣款（接收方中心） 测试通过Success！------\n")
 
-
-    def huiDanZhangDanChaXun(self):   #回单账单查询
+    # 回单账单查询
+    def huiDanZhangDanChaXun(self):
         try:
             logFile.write(u"------ 回单账单查询 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'回单账单查询').click()    #点击 回单账单查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab150')  #跳转到 回单账单查询 iframe内
+            self.driver.switch_to.frame(u'indextabPRS回单账单查询')  #跳转到 回单账单查询 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"回单账单查询 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -855,18 +992,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------回单账单查询 测试通过Success！------\n")
 
-
-    def zhanDianCaiWuShuJuChongTui(self):   #站点财务数据重推
+    # 站点财务数据重推
+    def zhanDianCaiWuShuJuChongTui(self):
         try:
             logFile.write(u"------ 站点财务数据重推 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'站点财务数据重推').click()    #点击 站点财务数据重推
             time.sleep(2)
-            self.driver.switch_to.frame('indextab1000013000')  #跳转到 站点财务数据重推 iframe内
+            self.driver.switch_to.frame(u'indextabPRS站点财务数据重推')  #跳转到 站点财务数据重推 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"站点财务数据重推 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -874,18 +1015,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------站点财务数据重推 测试通过Success！------\n")
 
-
-    def zhangDanFeiYongPiDai(self):   #账单费用批带
+    # 账单费用批带
+    def zhangDanFeiYongPiDai(self):
         try:
             logFile.write(u"------ 账单费用批带 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'账单费用批带').click()    #点击 账单费用批带
             time.sleep(2)
-            self.driver.switch_to.frame('indextab329')  #跳转到 账单费用批带 iframe内
+            self.driver.switch_to.frame(u'indextabPRS账单费用批带')  #跳转到 账单费用批带 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"账单费用批带 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -893,18 +1038,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------账单费用批带 测试通过Success！------\n")
 
-
-    def shuJuDaoChuChaKan(self):   #数据导出查看
+    # 数据导出查看
+    def shuJuDaoChuChaKan(self):
         try:
             logFile.write(u"------ 数据导出查看 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'数据导出查看').click()    #点击 数据导出查看
             time.sleep(2)
-            self.driver.switch_to.frame('indextab1000012000')  #跳转到 数据导出查看 iframe内
+            self.driver.switch_to.frame(u'indextabPRS数据导出查看')  #跳转到 数据导出查看 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"数据导出查看 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -912,18 +1061,22 @@ class TestPRS(object):
         else:
             logFile.write(u"------数据导出查看 测试通过Success！------\n")
 
-
-    def wangDianGuanXiChaXun(self):   #网点关系查询
+    # 网点关系查询
+    def wangDianGuanXiChaXun(self):
         try:
             logFile.write(u"------ 网点关系查询 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转到默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'网点关系查询').click()    #点击 网点关系查询
             time.sleep(2)
-            self.driver.switch_to.frame('indextab1000035000')  #跳转到 网点关系查询 iframe内
+            self.driver.switch_to.frame(u'indextabPRS网点关系查询')  #跳转到 网点关系查询 iframe内
             time.sleep(1)
             self.driver.find_element_by_link_text(u'查询').click()    #点击 查询
             time.sleep(3)
+
+            #关闭标签页
+            self.closeTagPage()
+
         except NoSuchElementException,e:
             logFile.write(u"网点关系查询 失败Fail:\n" + traceback.format_exc() + "\n")
         except Exception,e:
@@ -933,7 +1086,8 @@ class TestPRS(object):
 
 
     # ----------------------------------------------------------------------以下为基础模块--------------------------------------------------------------------------
-    def yeWuGuiZeLeiXing(self):   #业务规则类型
+    # 业务规则类型
+    def yeWuGuiZeLeiXing(self):
         try:
             logFile.write(u"------ 业务规则类型 开始执行：------\n")
             self.driver.find_element_by_partial_link_text(u'基础数据管理').click()     #点击 基础数据管理
@@ -942,7 +1096,7 @@ class TestPRS(object):
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'业务规则类型').click()    #点击 业务规则类型
             time.sleep(2)
-            self.driver.switch_to.frame('indextab155')  #跳转到 业务规则类型 iframe内
+            self.driver.switch_to.frame(u'indextabPRS业务规则类型')  #跳转到 业务规则类型 iframe内
             time.sleep(1)
             assert u"业务规则名称:" in self.driver.page_source,u"业务规则名称-断言失败" #添加断言
 
@@ -1010,13 +1164,8 @@ class TestPRS(object):
             #     time.sleep(1)
 
 
-            #关闭业务规则类型界面
-            self.driver.switch_to.default_content() #一定要跳出iframe，才能关闭界面
-            #定义js变量为js语句
-            js = "document.getElementsByClassName('tabs-close')[0].click()"
-            #执行js脚本
-            self.driver.execute_script(js)  #调用execute_script()方法
-            time.sleep(1)
+            #关闭标签页
+            self.closeTagPage()
 
         except NoSuchElementException,e:
             logFile.write(u"业务规则类型 失败Fail:\n" + traceback.format_exc() + "\n")
@@ -1025,15 +1174,15 @@ class TestPRS(object):
         else:
             logFile.write(u"------业务规则类型 测试通过Success！------\n")
 
-
-    def yeWuGuiZeSheZhi(self):   #业务规则设置
+    # 业务规则设置
+    def yeWuGuiZeSheZhi(self):
         try:
             logFile.write(u"------ 业务规则设置 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转进入默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'业务规则设置').click()    #点击 业务规则设置
             time.sleep(2)
-            self.driver.switch_to.frame('indextab159')  #跳转到 业务规则设置 iframe内
+            self.driver.switch_to.frame(u'indextabPRS业务规则设置')  #跳转到 业务规则设置 iframe内
             time.sleep(1)
             assert u"启用:" in self.driver.page_source,u"启用-断言失败" #添加断言
 
@@ -1150,11 +1299,8 @@ class TestPRS(object):
             time.sleep(1)
 
 
-            #关闭业务规则设置界面
-            self.driver.switch_to.default_content() #一定要跳出iframe，才能关闭界面
-            #使用xpath定位关闭界面
-            self.driver.find_element_by_xpath('//*[@id="mainTab"]/div[1]/div[3]/ul/li[2]/a[2]').click()
-            time.sleep(1)
+            #关闭标签页
+            self.closeTagPage()
 
         except NoSuchElementException,e:
             logFile.write(u"业务规则设置 失败Fail:\n" + traceback.format_exc() + "\n")
@@ -1163,16 +1309,15 @@ class TestPRS(object):
         else:
             logFile.write(u"------业务规则设置 测试通过Success！------\n")
 
-
-
-    def huiLvWeiHu(self):   #汇率维护
+    # 汇率维护
+    def huiLvWeiHu(self):
         try:
             logFile.write(u"------ 汇率维护 开始执行：------\n")
             self.driver.switch_to.default_content()     #跳转进入默认iframe内
             time.sleep(1)
             self.driver.find_element_by_partial_link_text(u'汇率维护').click()    #点击 汇率维护
             time.sleep(2)
-            self.driver.switch_to.frame('indextab120')  #跳转到 汇率维护 iframe内
+            self.driver.switch_to.frame(u'indextabPRS汇率维护')  #跳转到 汇率维护 iframe内
             time.sleep(1)
             assert u"返回今天" in self.driver.page_source,u"返回今天-断言失败" #添加断言
 
@@ -1197,11 +1342,11 @@ class TestPRS(object):
             chaXunYuanShiHuoBi.send_keys(Keys.ENTER)    #模拟键盘按键-回车
             time.sleep(0.5)
 
-            #使用js添加 属性
-            #添加查询条件-原始货币的只读属性
-            addReadonly = "document.getElementById('_easyui_textbox_input6').setAttribute('readonly','readonly')"
-            self.driver.execute_script(addReadonly)
-            time.sleep(0.5)
+            # #使用js添加 属性
+            # #添加查询条件-原始货币的只读属性
+            # addReadonly = "document.getElementById('_easyui_textbox_input6').setAttribute('readonly','readonly')"
+            # self.driver.execute_script(addReadonly)
+            # time.sleep(0.5)
 
             # 定义 查询
             chaXun = self.driver.find_element_by_link_text(u'查询')
@@ -1228,11 +1373,11 @@ class TestPRS(object):
             chaXunYuanShiHuoBiXinZheng.send_keys(Keys.ENTER)  # 模拟键盘按键-回车
             time.sleep(0.5)
 
-            # 使用js添加 属性
-            # 添加查询条件-原始货币的只读属性
-            addReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').setAttribute('readonly','readonly')"
-            self.driver.execute_script(addReadonlyXinZheng)
-            time.sleep(0.5)
+            # # 使用js添加 属性
+            # # 添加查询条件-原始货币的只读属性
+            # addReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').setAttribute('readonly','readonly')"
+            # self.driver.execute_script(addReadonlyXinZheng)
+            # time.sleep(0.5)
 
             #汇率输入框中输入值
             huiLv = self.driver.find_element_by_id('_easyui_textbox_input1')
@@ -1253,16 +1398,58 @@ class TestPRS(object):
             #点击汇率输入框，便于选中失效日期值
             huiLv.click()
             time.sleep(1)
-            #点击 保存 按钮
+            #定义 保存 按钮
             baoCun = self.driver.find_element_by_link_text(u'保存')
-            baoCun.click()
+            baoCun.click()  #点击保存
             time.sleep(2)
 
+            #添加断言对新增结果进行判断
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[8]/div').text == "8",u"汇率断言失败"
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[12]/div').text == u"未审核",u"状态断言失败"
 
 
+            #测试 修改模块
+            gouXuan = self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input')    #定义变量-勾选
+            gouXuan.click()  #勾选第一条数据
+            time.sleep(1)
+            #点击 修改 按钮
+            self.driver.find_element_by_partial_link_text(u'修改').click()
+            time.sleep(1)
+            huiLv.clear()       #清空汇率
+            huiLv.send_keys('9')    #修改汇率
+            time.sleep(1)   #等待时间
+            baoCun.click()       #点击 保存 按钮
+            time.sleep(2)
+
+            #对修改结果进行判断
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[8]/div').text == "9",u"汇率断言失败"
 
 
+            #测试 审核 模块
+            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()     #勾选第一条数据
+            time.sleep(1)
+            self.driver.find_element_by_partial_link_text(u'审核').click()    #点击 审核
+            self.driver.find_element_by_link_text(u'确定').click()        #点击弹窗上的 确定
+            time.sleep(2)
 
+            #对审核结果进行判断
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[12]/div').text == u"已审核",u"审核状态断言失败"
+
+
+            #测试取消审核模块
+            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()     #勾选第一条数据
+            time.sleep(1)
+            self.driver.find_element_by_partial_link_text(u'取消审核').click()      #点击 取消审核 按钮
+            time.sleep(2)
+            self.driver.find_element_by_link_text(u'确定').click()        #点击弹窗上的 确定
+            time.sleep(2)
+
+            #对取消审核结果进行判断
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[12]/div').text == u"未审核",u"审核状态断言失败"
+
+
+            #关闭标签页
+            self.closeTagPage()
 
         except NoSuchElementException,e:
             logFile.write(u"汇率维护 失败Fail:\n" + traceback.format_exc() + "\n")
