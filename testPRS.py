@@ -84,6 +84,17 @@ class TestPRS(object):
             logFile.write(u"关闭标签页执行失败Fail:\n" + traceback.format_exc() + "\n")
 
 
+    #判断 页面元素是否存在
+    def isElementExist(self,by,value):
+        try:
+            self.driver.find_element(by = by,value = value)   #去找界面元素
+        except NoSuchElementException,e:
+            return False        #没有找到元素，返回False
+        else:
+            return True     #找到了元素，返回True
+
+
+
     #----------------------------------------------------------------------以下为账单模块--------------------------------------------------------------------------
     # 同行账单
     def tongHangZhangDan(self):
@@ -1101,7 +1112,7 @@ class TestPRS(object):
             time.sleep(1)
             assert u"业务规则名称:" in self.driver.page_source,u"业务规则名称-断言失败" #添加断言
 
-            # for i in xrange(2): #设置循环
+            # for i in xrange(1): #设置循环
             #     #测试 新增 功能
             #     yeWuGuiZeBiaoHao = "autoTest" + str(i)
             #     self.driver.find_element_by_partial_link_text(u'新增').click()       #点击 新增
@@ -1391,7 +1402,7 @@ class TestPRS(object):
             # 定义 保存 按钮
             baoCun = self.driver.find_element_by_link_text(u'保存')
             #使用循环
-            for i in xrange(5):
+            for i in xrange(10):
                 # 定义测试日期-如果保存失败，则日期自加1，继续保存
                 ceShiDate = (datetime.datetime.now() + datetime.timedelta(days=i)).strftime("%Y-%m-%d")
                 shengXiaoRiQi.clear()   #清空 生效日期
@@ -1407,10 +1418,12 @@ class TestPRS(object):
                 huiLv.click()
                 time.sleep(1)
                 baoCun.click()  #点击保存
-                time.sleep(3)
-                # if  self.driver.find_element_by_partial_link_text(u'取消') == False:
-                #     break
-                # if self.driver.find_element(by=)
+                time.sleep(1)
+                #调用该类共用方法，进行判断元素是否存在
+                if self.isElementExist("partial link text",u"保存并继续") == False:
+                    break       #如果元素不存在，则跳出该整个循坏
+                else:
+                    continue        #如果元素存在，则继续执行下个循坏
 
 
             #添加断言对新增结果进行判断
