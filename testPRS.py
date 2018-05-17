@@ -113,7 +113,7 @@ class TestPRS(object):
             anNiu.click()  # 点击 按钮
             time.sleep(sleepTime)   #等待时间
         except NoSuchElementException,e:
-            logFile(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
+            logFile.write(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
 
 
     #定义初次进入三级模块下菜单的方法
@@ -128,7 +128,7 @@ class TestPRS(object):
             self.driver.switch_to.frame(menu3FrameID)  # 跳转到 三级菜单的 iframe内
             time.sleep(minSleepTime)    #等待最小时间
         except NoSuchElementException,e:
-            logFile(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
+            logFile.write(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
 
 
     #定义从三级模块退出并进入相同一级模块下菜单的方法
@@ -140,7 +140,7 @@ class TestPRS(object):
             self.driver.switch_to.frame(menuFrameID)  # 跳转到 二级或三级菜单 iframe内
             time.sleep(minSleepTime)    #等待最小时间
         except NoSuchElementException, e:
-            logFile(u"元素定位失败Fail:\n" + traceback.format_exc() + "\n")
+            logFile.write(u"元素定位失败Fail:\n" + traceback.format_exc() + "\n")
 
 
     #定义循环按下键选择下拉内容
@@ -155,7 +155,18 @@ class TestPRS(object):
             element.send_keys(Keys.ENTER)  # 模拟键盘按键-回车
             time.sleep(maxSleepTime)    #等待最大时间
         except NoSuchElementException, e:
-            logFile(u"元素定位失败Fail:\n" + traceback.format_exc() + "\n")
+            logFile.write(u"元素定位失败Fail:\n" + traceback.format_exc() + "\n")
+
+
+    #定义通过id 使用js语句删除元素的只读属性
+    def deleteReadonlyById(self,elementId):
+        #elementId 为字符串型
+        try:
+            deleteReadonly = "document.getElementById(" + elementId + ").removeAttribute('readonly')"
+            self.driver.execute_script(deleteReadonly)  # 调用execute_script方法 执行js语句
+        except Exception, e:
+            pass
+
 
 
     #----------------------------------------------------------------------以下为账单模块--------------------------------------------------------------------------
@@ -181,7 +192,7 @@ class TestPRS(object):
             time.sleep(5)
 
 
-            #测试查询条件
+            # 测试查询条件
             for i in range(3):
                 #寄件财务中心
                 jiJiancwzx = self.driver.find_element_by_id('_easyui_textbox_input10')
@@ -273,14 +284,10 @@ class TestPRS(object):
     def yiErJiJiJianZhangDan(self):
         try:
             logFile.write(u"------一二级网点寄件账单开始执行：------\n")
-            self.driver.switch_to.default_content() #跳回到默认iframe框架内
-            time.sleep(1)
-            self.driver.find_element_by_xpath('//*[@id="229"]/a').click()   #点击一二级网点寄件账单
-            time.sleep(2)
-            self.driver.switch_to.frame(u'indextabPRS一二级网点寄件账单')  #跳转到一二级寄件账单iframe内
-            time.sleep(1)
-            self.driver.find_element_by_xpath('//*[@id="formFindDictType"]/div/div[2]/table/tbody/tr[4]/td[3]/a/span').click()  #点击查询
-            time.sleep(3)
+            #调用公用方法，进入 一二级网点寄件账单
+            self.thirdQuitEnterSameFirstMenu(u"一二级网点寄件账单",u'indextabPRS一二级网点寄件账单',1,2)
+            self.clickLinkAnNiu(u"查询",3)    #点击查询
+
 
             #关闭标签页
             self.closeTagPage()
@@ -297,14 +304,10 @@ class TestPRS(object):
     def yiErJiPaiJianZhangDan(self):
         try:
             logFile.write(u"------一二级网点派件账单开始执行：------\n")
-            self.driver.switch_to.default_content() #跳回到默认iframe框架内
-            time.sleep(1)
-            self.driver.find_element_by_xpath('//*[@id="230"]/a').click()   #点击一二级网点派件账单
-            time.sleep(2)
-            self.driver.switch_to.frame(u'indextabPRS一二级网点派件账单')  #跳转到一二级派件账单iframe内
-            time.sleep(1)
-            self.driver.find_element_by_link_text(u'查询').click()    #点击查询
-            time.sleep(3)
+            #调用公用方法，进入一二级网点派件账单
+            self.thirdQuitEnterSameFirstMenu(u"一二级网点派件账单",u'indextabPRS一二级网点派件账单',1,2)
+            self.clickLinkAnNiu(u"查询",3)    #点击查询
+
 
             #关闭标签页
             self.closeTagPage()
@@ -1206,66 +1209,66 @@ class TestPRS(object):
             self.firstEnterThirdMenu(u"基础数据管理",u"业务规则管理",u"业务规则类型",u"indextabPRS业务规则类型",1,2)
             assert u"业务规则名称:" in self.driver.page_source,u"业务规则名称-断言失败" #添加断言
 
-            # for i in xrange(1): #设置循环
-            #
-            #     ##########  测试 新增 功能    ##########
-            #     yeWuGuiZeBiaoHao = "autoTest" + str(i)
-            #     self.driver.find_element_by_partial_link_text(u'新增').click()       #点击 新增
-            #     time.sleep(1)
-            #     self.driver.find_element_by_id('_easyui_textbox_input2').send_keys(yeWuGuiZeBiaoHao)  #业务规则编码 输入测试内容
-            #     time.sleep(0.2)
-            #     self.driver.find_element_by_id('_easyui_textbox_input3').send_keys(u'自动化测试')    #业务规则名称 输入测试内容
-            #     time.sleep(0.2)
-            #     #定义变量 参数类型
-            #     canShuLeiXing =  self.driver.find_element_by_xpath('//*[@id="formBusiness"]/table/tbody/tr[3]/td[2]/span/span/a')
-            #     canShuLeiXing.click()    #点击参数类型下拉框
-            #     time.sleep(0.5)
-            #     self.driver.find_element_by_id('_easyui_combobox_i1_1').click()     #选择下拉内容 布尔型
-            #     time.sleep(0.2)
-            #     baoCun = self.driver.find_element_by_link_text(u'保存')   #定义变量 保存
-            #     baoCun.click()        #点击 保存
-            #     time.sleep(2)
-            #     #在查询条件中输入业务规则编号
-            #     chaXunTiaoJian = self.driver.find_element_by_id('_easyui_textbox_input1')   #定义查询条件 变量
-            #     chaXunTiaoJian.clear()      #清空查询条件
-            #     chaXunTiaoJian.send_keys(yeWuGuiZeBiaoHao) #在查询条件中输入编号
-            #     time.sleep(0.2)
-            #     chaXun = self.driver.find_element_by_link_text(u'查询')
-            #     chaXun.click()    #点击 查询
-            #     time.sleep(1)
-            #     # 添加断言 判断是否新增成功
-            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text == yeWuGuiZeBiaoHao,u"新增失败"
-            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u"布尔型",u"新增失败"
-            #
-            #
-            #     ##########  测试 修改 功能    ##########
-            #     self.driver.find_element_by_name('id').click()      #点击 勾选
-            #     time.sleep(0.2)
-            #     self.driver.find_element_by_partial_link_text(u'修改').click()    #点击 修改
-            #     time.sleep(1)
-            #     canShuLeiXing.click()   #点击 参数类型
-            #     time.sleep(0.5)
-            #     self.driver.find_element_by_id('_easyui_combobox_i1_5').click()     #修改为 字符型
-            #     time.sleep(0.2)
-            #     baoCun.click()  #点击 保存
-            #     time.sleep(2)
-            #     chaXun.click()  #点击 查询
-            #     time.sleep(1)
-            #     #添加断言 判断是否修改成功
-            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u'字符型',u"修改失败"
-            #
-            #
-            #     ##########  测试 删除 功能    ##########
-            #     self.driver.find_element_by_name('id').click()      #点击 勾选
-            #     time.sleep(0.2)
-            #     self.driver.find_element_by_partial_link_text(u'删除').click()    #点击 删除
-            #     time.sleep(1)
-            #     self.driver.find_element_by_partial_link_text(u'确定').click()    #点击 确定
-            #     time.sleep(1)
-            #     chaXun.click()  #点击 查询
-            #     time.sleep(1)
-            #     #添加断言 判断是否删除成功
-            #     assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text != yeWuGuiZeBiaoHao,u"删除失败"
+            for i in xrange(1): #设置循环
+
+                ##########  测试 新增 功能    ##########
+                yeWuGuiZeBiaoHao = "autoTest" + str(i)
+                self.driver.find_element_by_partial_link_text(u'新增').click()       #点击 新增
+                time.sleep(1)
+                self.driver.find_element_by_id('_easyui_textbox_input2').send_keys(yeWuGuiZeBiaoHao)  #业务规则编码 输入测试内容
+                time.sleep(0.2)
+                self.driver.find_element_by_id('_easyui_textbox_input3').send_keys(u'自动化测试')    #业务规则名称 输入测试内容
+                time.sleep(0.2)
+                #定义变量 参数类型
+                canShuLeiXing =  self.driver.find_element_by_xpath('//*[@id="formBusiness"]/table/tbody/tr[3]/td[2]/span/span/a')
+                canShuLeiXing.click()    #点击参数类型下拉框
+                time.sleep(0.5)
+                self.driver.find_element_by_id('_easyui_combobox_i1_1').click()     #选择下拉内容 布尔型
+                time.sleep(0.2)
+                baoCun = self.driver.find_element_by_link_text(u'保存')   #定义变量 保存
+                baoCun.click()        #点击 保存
+                time.sleep(2)
+                #在查询条件中输入业务规则编号
+                chaXunTiaoJian = self.driver.find_element_by_id('_easyui_textbox_input1')   #定义查询条件 变量
+                chaXunTiaoJian.clear()      #清空查询条件
+                chaXunTiaoJian.send_keys(yeWuGuiZeBiaoHao) #在查询条件中输入编号
+                time.sleep(0.2)
+                chaXun = self.driver.find_element_by_link_text(u'查询')
+                chaXun.click()    #点击 查询
+                time.sleep(1)
+                # 添加断言 判断是否新增成功
+                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text == yeWuGuiZeBiaoHao,u"新增失败"
+                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u"布尔型",u"新增失败"
+
+
+                ##########  测试 修改 功能    ##########
+                self.driver.find_element_by_name('id').click()      #点击 勾选
+                time.sleep(0.2)
+                self.driver.find_element_by_partial_link_text(u'修改').click()    #点击 修改
+                time.sleep(1)
+                canShuLeiXing.click()   #点击 参数类型
+                time.sleep(0.5)
+                self.driver.find_element_by_id('_easyui_combobox_i1_5').click()     #修改为 字符型
+                time.sleep(0.2)
+                baoCun.click()  #点击 保存
+                time.sleep(2)
+                chaXun.click()  #点击 查询
+                time.sleep(1)
+                #添加断言 判断是否修改成功
+                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[7]/div').text == u'字符型',u"修改失败"
+
+
+                ##########  测试 删除 功能    ##########
+                self.driver.find_element_by_name('id').click()      #点击 勾选
+                time.sleep(0.2)
+                self.driver.find_element_by_partial_link_text(u'删除').click()    #点击 删除
+                time.sleep(1)
+                self.driver.find_element_by_partial_link_text(u'确定').click()    #点击 确定
+                time.sleep(1)
+                chaXun.click()  #点击 查询
+                time.sleep(1)
+                #添加断言 判断是否删除成功
+                assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[5]/div').text != yeWuGuiZeBiaoHao,u"删除失败"
 
             #关闭标签页
             self.closeTagPage()
@@ -1411,16 +1414,13 @@ class TestPRS(object):
             #调用公用方法，进入汇率维护界面
             self.thirdQuitEnterSameFirstMenu(u'汇率维护',u'indextabPRS汇率维护',1,2)
             assert u"返回今天" in self.driver.page_source,u"返回今天-断言失败" #添加断言
-
             #切换到汇率列表标签页
-            self.clickLinkAnNiu(u"汇率列表",1)
+            self.clickLinkAnNiu(u"汇率列表",2)
 
 
             ##########      测试 查询 条件    ##########
-            # #使用js删除 查询条件-原始货币的只读属性
-            delReadonly = "document.getElementById('_easyui_textbox_input6').removeAttribute('readonly')"
-            self.driver.execute_script(delReadonly)     #调用execute_script方法 执行js语句
-
+            #调用公用方法，删除查询条件-原始货币的只读属性
+            self.deleteReadonlyById("_easyui_textbox_input6")
             #调用公用按键方法，循环9次，选中英镑
             self.enterDownToChoice("id","_easyui_textbox_input6",9,0.1,0.2)
             self.clickLinkAnNiu(u"查询",2)    #点击 查询
@@ -1428,19 +1428,18 @@ class TestPRS(object):
 
             ##########  测试 新增  功能  ##########
             self.clickPartialLinkAnNiu(u"新增",1)     #点击 新增 按钮
-            # 使用js删除 -原始货币的只读属性
-            delReadonlyXinZheng = "document.getElementById('_easyui_textbox_input7').removeAttribute('readonly')"
-            self.driver.execute_script(delReadonlyXinZheng)  # 调用execute_script方法 执行js语句
+            #调用公用方法，删除原始货币的只读属性
+            self.deleteReadonlyById("_easyui_textbox_input7")
             #调用公用按键方法，循环9次，选中英镑
             self.enterDownToChoice("id","_easyui_textbox_input7",9,0.1,0.2)
-            #汇率输入框中输入值
+            # 汇率元素定位
             huiLv = self.driver.find_element_by_id('_easyui_textbox_input1')
-            huiLv.send_keys('8')
-            time.sleep(0.2)
-            #生效日期元素定位
+            # 生效日期元素定位
             shengXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input3')
             # 失效日期元素定位
             shiXiaoRiQi = self.driver.find_element_by_id('_easyui_textbox_input4')
+            huiLv.send_keys('8')                #汇率输入框中输入值
+            time.sleep(0.2)
             #使用循环
             for i in xrange(100):
                 # 定义测试日期-如果保存失败，则日期自加1，继续保存
@@ -1456,7 +1455,7 @@ class TestPRS(object):
                 #点击汇率输入框，便于选中失效日期值
                 huiLv.click()
                 self.clickLinkAnNiu(u"保存",2)    #点击 保存 按钮
-                #调用该类共用方法，进行判断元素是否存在
+                #调用该类公用方法，进行判断元素是否存在
                 if self.isElementExist("partial link text",u"保存并继续") == False:
                     break       #如果元素不存在，则跳出该整个循坏
                 else:
@@ -1467,8 +1466,8 @@ class TestPRS(object):
 
 
             ##########      测试   修改   功能  ##########
-            gouXuan = self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input')    #定义变量-勾选
-            gouXuan.click()  #勾选第一条数据
+            # 勾选第一条数据
+            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()
             time.sleep(0.2)
             self.clickPartialLinkAnNiu(u"修改",1)     #点击 修改 按钮
             huiLv.clear()       #清空汇率
@@ -1480,7 +1479,8 @@ class TestPRS(object):
 
 
             ##########      测试 审核 功能    ##########
-            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()     #勾选第一条数据
+            # 勾选第一条数据
+            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()
             time.sleep(0.2)
             self.clickPartialLinkAnNiu(u"审核",1)     #点击 审核 按钮
             self.clickLinkAnNiu(u"确定",2)        #点击 确定 按钮
@@ -1489,7 +1489,8 @@ class TestPRS(object):
 
 
             ##########      测试  取消审核  功能   ##########
-            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()     #勾选第一条数据
+            # 勾选第一条数据
+            self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[3]/div/input').click()
             time.sleep(0.2)
             self.clickPartialLinkAnNiu(u"取消审核",1)       #点击 取消审核 按钮
             self.clickLinkAnNiu(u"确定",2)        #点击 确定 按钮
