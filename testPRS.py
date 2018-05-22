@@ -116,28 +116,14 @@ class TestPRS(object):
             logFile.write(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
 
 
-    #定义初次进入三级模块下菜单的方法
-    def firstEnterThirdMenu(self,menu1,menu2,menu3,menu3FrameID,minSleepTime = 1,maxSleepTime = 2):
-        try:
-            self.driver.find_element_by_partial_link_text(menu1).click()  # 点击 一级菜单
-            time.sleep(minSleepTime)    #等待最小时间
-            self.driver.find_element_by_partial_link_text(menu2).click()  # 点击 二级菜单
-            time.sleep(minSleepTime)    #等待最小时间
-            self.driver.find_element_by_partial_link_text(menu3).click()  # 点击 三级菜单
-            time.sleep(maxSleepTime)    #等待最大时间
-            self.driver.switch_to.frame(menu3FrameID)  # 跳转到 三级菜单的 iframe内
-            time.sleep(minSleepTime)    #等待最小时间
-        except NoSuchElementException,e:
-            logFile.write(u"按钮定位失败Fail:\n" + traceback.format_exc() + "\n")
-
-
-    #定义从三级模块退出并进入相同一级模块下菜单的方法
-    def thirdQuitEnterSameFirstMenu(self,secondOrThirdMenu,menuFrameID,minSleepTime = 1,maxSleepTime = 2):
+    #定义进入菜单可变参数的方法
+    def enterMenu(self,enterMenuFrameID,minSleepTime = 1,maxSleepTime = 2,*upOrEnterMenu):
         try:
             self.driver.switch_to.default_content()  # 跳转进入默认iframe内
-            self.driver.find_element_by_partial_link_text(secondOrThirdMenu).click()  # 点击 二级或三级菜单
-            time.sleep(maxSleepTime)    #等待最大时间
-            self.driver.switch_to.frame(menuFrameID)  # 跳转到 二级或三级菜单 iframe内
+            for menu in upOrEnterMenu:
+                self.driver.find_element_by_partial_link_text(menu).click()  # 点击 上级或本级菜单
+                time.sleep(maxSleepTime)    #等待最大时间
+            self.driver.switch_to.frame(enterMenuFrameID)  # 跳转到本级菜单 iframe内
             time.sleep(minSleepTime)    #等待最小时间
         except NoSuchElementException, e:
             logFile.write(u"元素定位失败Fail:\n" + traceback.format_exc() + "\n")
@@ -174,16 +160,8 @@ class TestPRS(object):
     def tongHangZhangDan(self):
         try:
             logFile.write(u"------同行账单开始执行：------\n")
-            # 打开同行账单界面
-            self.driver.find_element_by_xpath('//*[@id="311"]/a').click()  # 点击账单结算管理
-            time.sleep(1)
-            self.driver.find_element_by_xpath('//*[@id="12297"]/a').click()  # 点击分成账单
-            time.sleep(1)
-            self.driver.find_element_by_xpath('//*[@id="261"]/a').click()  # 点击同行出货账单编辑
-            time.sleep(3)
-
-            # 进入同行账单测试
-            self.driver.switch_to.frame(u'indextabPRS同行出货账单编辑')  # 跳转到iframe内
+            # 调用公用方法，进入同行账单界面
+            self.enterMenu(u'indextabPRS同行出货账单编辑',1,3,u"账单结算管理",u"分成账单",u"同行出货账单编辑")
             assert u"同行所属网点" in self.driver.page_source,u"同行所属网点断言失败"  # 断言“同行所属网点”是否在页面源码中
             #设置变量chaXun
             chaXun = self.driver.find_element_by_link_text(u'查询')   #通过文本链接元素定位
@@ -285,7 +263,7 @@ class TestPRS(object):
         try:
             logFile.write(u"------一二级网点寄件账单开始执行：------\n")
             #调用公用方法，进入 一二级网点寄件账单
-            self.thirdQuitEnterSameFirstMenu(u"一二级网点寄件账单",u'indextabPRS一二级网点寄件账单',1,2)
+            self.enterMenu(u'indextabPRS一二级网点寄件账单',1,3,u"一二级网点寄件账单")
             self.clickLinkAnNiu(u"查询",3)    #点击查询
 
 
@@ -305,7 +283,7 @@ class TestPRS(object):
         try:
             logFile.write(u"------一二级网点派件账单开始执行：------\n")
             #调用公用方法，进入一二级网点派件账单
-            self.thirdQuitEnterSameFirstMenu(u"一二级网点派件账单",u'indextabPRS一二级网点派件账单',1,2)
+            self.enterMenu(u'indextabPRS一二级网点派件账单',1,3,u"一二级网点派件账单")
             self.clickLinkAnNiu(u"查询",3)    #点击查询
 
 
@@ -324,14 +302,8 @@ class TestPRS(object):
     def zhangDanBianJi(self):
         try:
             logFile.write(u"------账单编辑开始执行：------\n")
-            self.driver.switch_to.default_content() #跳回到默认iframe框架内
-            time.sleep(1)
-            self.driver.find_element_by_partial_link_text(u"运单结算").click()  #点击运单结算
-            time.sleep(1)
-            self.driver.find_element_by_partial_link_text(u'账单编辑').click()  #点击账单编辑
-            time.sleep(2)
-            self.driver.switch_to.frame(u'indextabPRS账单编辑')  #跳转到账单编辑iframe内
-            time.sleep(1)
+            #调用公用方法，进入账单编辑界面
+            self.enterMenu(u'indextabPRS账单编辑',1,3,u"运单结算",u'账单编辑')
             self.driver.find_element_by_link_text(u'查询').click()    #点击查询
             time.sleep(3)
 
@@ -1205,8 +1177,8 @@ class TestPRS(object):
     def yeWuGuiZeLeiXing(self):
         try:
             logFile.write(u"------ 业务规则类型 开始执行：------\n")
-            #调用公用方法，进入三级菜单业务规则类型界面
-            self.firstEnterThirdMenu(u"基础数据管理",u"业务规则管理",u"业务规则类型",u"indextabPRS业务规则类型",1,2)
+            #调用公用方法，进入业务规则类型界面
+            self.enterMenu(u"indextabPRS业务规则类型",1,2,u"基础数据管理",u"业务规则管理",u"业务规则类型")
             assert u"业务规则名称:" in self.driver.page_source,u"业务规则名称-断言失败" #添加断言
 
             for i in xrange(1): #设置循环
@@ -1279,8 +1251,8 @@ class TestPRS(object):
     def yeWuGuiZeSheZhi(self):
         try:
             logFile.write(u"------ 业务规则设置 开始执行：------\n")
-            #调用公用方法，进入同一级目录下的业务规则设置界面
-            self.thirdQuitEnterSameFirstMenu(u'业务规则设置',u'indextabPRS业务规则设置',1,2)
+            #调用公用方法，进入业务规则设置界面
+            self.enterMenu(u'indextabPRS业务规则设置',1,2,u'业务规则设置')
             assert u"启用:" in self.driver.page_source,u"启用-断言失败" #添加断言
 
             #点击查询按钮
@@ -1400,7 +1372,7 @@ class TestPRS(object):
         try:
             logFile.write(u"------ 汇率维护 开始执行：------\n")
             #调用公用方法，进入汇率维护界面
-            self.thirdQuitEnterSameFirstMenu(u'汇率维护',u'indextabPRS汇率维护',1,2)
+            self.enterMenu(u'indextabPRS汇率维护',1,2,u'汇率维护')
             assert u"返回今天" in self.driver.page_source,u"返回今天-断言失败" #添加断言
             #切换到汇率列表标签页
             self.clickLinkAnNiu(u"汇率列表",2)

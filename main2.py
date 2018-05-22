@@ -6,12 +6,16 @@ if __name__ == '__main__':
         test = TestPRS()    #类实例化
         test.login()    #登录
 
+        #以下为基础数据模块调用方法，业务规则类型为该模块的入口
+        test.yeWuGuiZeLeiXing()             #执行 业务规则类型
+        test.yeWuGuiZeSheZhi()              #执行 业务规则设置
+        test.huiLvWeiHu()               #执行 汇率维护
 
         #以下为账单模块调用方法，同行账单为该模块的入口
-        # test.tongHangZhangDan()     #执行同行账单
-        # test.yiErJiJiJianZhangDan()     #执行一二级寄件账单
-        # test.yiErJiPaiJianZhangDan()    #执行一二级派件账单
-        # test.zhangDanBianJi()   #执行账单编辑
+        test.tongHangZhangDan()     #执行同行账单
+        test.yiErJiJiJianZhangDan()     #执行一二级寄件账单
+        test.yiErJiPaiJianZhangDan()    #执行一二级派件账单
+        test.zhangDanBianJi()   #执行账单编辑
         # test.shiXiaoPaiFeiPaiJianZhangDan()     #执行时效派费派件账单
         # test.wangDianChuHuoDuiZhang()   #执行网点出货对账
         # test.wangDianPaiJianDuiZhang()  #执行网点派件对账
@@ -47,12 +51,5 @@ if __name__ == '__main__':
         # test.shuJuDaoChuChaKan()            #执行 数据导出查看
         # test.shuJuDaoChuChaKan()            #执行 数据导出查看
         # test.wangDianGuanXiChaXun()         #执行 网点关系查询
-
-
-        #以下为基础数据模块调用方法，业务规则类型为该模块的入口
-        test.yeWuGuiZeLeiXing()             #执行 业务规则类型
-        test.yeWuGuiZeSheZhi()              #执行 业务规则设置
-        test.huiLvWeiHu()               #执行 汇率维护
-
 
         test.quitBrowser()      #退出浏览器
