@@ -15,7 +15,7 @@ class TestPRS(object):
     def __init__(self):
         try:
             global logFile  # 将日志文件logFile定义为全局变量
-            logFile = open("log", "a")  # 定义文件对象
+            logFile = open("log", "w")  # 定义文件对象
             #time.asctime() 返回为可读的当前时间，参数默认为本地时间
             logFile.write("\n" + time.asctime() + "  ----------------------------------------------   Begin Test  ----------------------------------------------\n\n")
             logFile.write(u"------TestPRS类实例化init方法开始执行：------\n")
