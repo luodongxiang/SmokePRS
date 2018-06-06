@@ -171,7 +171,7 @@ class TestPRS(object):
 
 
             # 测试查询条件
-            for i in range(3):
+            for i in range(1):
                 #寄件财务中心
                 jiJiancwzx = self.driver.find_element_by_id('_easyui_textbox_input10')
                 jiJiancwzx.click()  #点击
@@ -206,7 +206,7 @@ class TestPRS(object):
 
 
             #测试运单编号查询是否有查询结果
-            billcode = 'LDX2018041012'
+            billcode = 'LDX2018051513'
             self.driver.find_element_by_id('billCode').send_keys(billcode)  #在运单编号输入框中输入运单编号
             time.sleep(1)
             # 点击查询
@@ -219,7 +219,7 @@ class TestPRS(object):
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r1-2-0"]/td[2]/div').text == billcode,u"运单编号断言失败" #断言运单编号
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r1-2-0"]/td[5]/div').text == u"虎门",u"寄件结算点断言失败" #断言寄件结算点
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r1-2-0"]/td[7]/div').text == u"广园一1",u"同行所属网点断言失败"  #断言同行所属网点
-            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r1-2-0"]/td[14]/div/a').text == "50",u"同行管理费断言失败"   #断言同行管理费
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r1-2-0"]/td[14]/div/a').text == "92",u"同行管理费断言失败"   #断言同行管理费
 
             #定义变量jiSuan重新计算分配额
             jiSuan = self.driver.find_element_by_xpath('//*[@id="tlbDictType"]/div/a[1]/span/span[1]')
@@ -236,7 +236,7 @@ class TestPRS(object):
             time.sleep(1)
             # self.driver.find_element_by_link_text("取消").click() #点击取消
             self.driver.find_element_by_xpath('/html/body/div[19]/div[3]/a[1]/span/span').click() #点击确定
-            time.sleep(3)
+            time.sleep(4)
 
 
             # self.driver.find_element_by_xpath('//*[@id="reportButton"]/span/span[1]').click()   #点击导出按钮
@@ -1259,7 +1259,7 @@ class TestPRS(object):
             self.clickLinkAnNiu(u"查询",2)
 
             #定义变量-测试数据业务规则名称
-            testDataYeWuGuiZeMingCheng = 'AAAAA'
+            testDataYeWuGuiZeMingCheng = 'TestData'
 
 
             ##########      测试  新增  功能      ##########
@@ -1274,7 +1274,7 @@ class TestPRS(object):
             #变量-参数值-新增界面
             # 此元素为动态id，直接使用id定位失败，需使用xpath定位：基于上层元素；
             canShuZhiXinZheng = self.driver.find_element_by_xpath('//*[@id="txtbusinessValue"]/span/input[1]')
-            canShuZhiXinZheng.send_keys('90')
+            canShuZhiXinZheng.send_keys('90.00')
             time.sleep(0.2)
             #变量-网点名称
             wangDianMingCheng = self.driver.find_element_by_id('_easyui_textbox_input7')
@@ -1310,8 +1310,8 @@ class TestPRS(object):
             # 点击查询按钮
             self.clickLinkAnNiu(u"查询", 2)
             #判断是否新增成功
-            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[9]/div').text == testDataYeWuGuiZeMingCheng,u"业务规则名称断言失败"
-            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[10]/div').text == "90",u"参数值断言失败"
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[8]/div').text == testDataYeWuGuiZeMingCheng,u"业务规则编号断言失败"
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[10]/div').text == "90.00",u"参数值断言失败"
             #断言 启用状态-使用xpath定位，再使用get_attribute获取属性值 进行判断
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[12]/div/input').get_attribute("value") == "1",u"启用状态 断言失败"
 
@@ -1325,7 +1325,7 @@ class TestPRS(object):
             #参数值-修改界面
             canShuZhiXiuGai = self.driver.find_element_by_xpath('//*[@id="txtbusinessValue"]/span/input[1]')
             canShuZhiXiuGai.clear() #清空 参数值内容
-            canShuZhiXiuGai.send_keys('91')   #修改 参数值
+            canShuZhiXiuGai.send_keys('91.00')   #修改 参数值
             time.sleep(0.5)
             qiYong.click()  #取消 启用
             time.sleep(0.2)
@@ -1338,7 +1338,7 @@ class TestPRS(object):
             time.sleep(0.5)
             self.clickLinkAnNiu(u"查询", 2)       # 点击查询按钮
             #判断是否修改成功
-            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[10]/div').text == "91",u"参数值断言失败"
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[10]/div').text == "91.00",u"参数值断言失败"
             #断言 启用状态-使用xpath定位，再使用get_attribute获取属性值 进行判断
             assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[12]/div/input').get_attribute("value") == "0",u"启用状态 断言失败"
 
@@ -1354,7 +1354,7 @@ class TestPRS(object):
             time.sleep(0.5)
             self.clickLinkAnNiu(u"查询", 2)               # 点击   查询按钮
             #判断是否删除成功
-            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[9]/div').text != testDataYeWuGuiZeMingCheng,u"业务规则名称断言失败"
+            assert self.driver.find_element_by_xpath('//*[@id="datagrid-row-r2-2-0"]/td[8]/div').text != testDataYeWuGuiZeMingCheng,u"业务规则编号断言失败"
 
             #关闭标签页
             self.closeTagPage()
