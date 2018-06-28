@@ -304,8 +304,7 @@ class TestPRS(object):
             logFile.write(u"------账单编辑开始执行：------\n")
             #调用公用方法，进入账单编辑界面
             self.enterMenu(u'indextabPRS账单编辑',1,3,u"运单结算",u'账单编辑')
-            self.driver.find_element_by_link_text(u'查询').click()    #点击查询
-            time.sleep(3)
+            self.clickLinkAnNiu(u'查询',3)    #点击查询
 
             #关闭标签页
             self.closeTagPage()
