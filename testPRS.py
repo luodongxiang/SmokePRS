@@ -20,7 +20,7 @@ class TestPRS(object):
             logFile.write("\n" + time.asctime() + "  ----------------------------------------------   Begin Test  ----------------------------------------------\n\n")
             logFile.write(u"------TestPRS类实例化init方法开始执行：------\n")
             # 定义url
-            url = "http://sitsso.uce.cn/omg-sso-main/toLogin.action?systemCode=PRS&refUrl=http://prs.sit.uce.cn/prs-common-main/login/loginAuthc.do"
+            url = "http://prs.sit.uc56.com"
             self.driver = webdriver.Chrome()  # 启动chrome浏览器
             self.driver.maximize_window()  # 窗口最大化
             self.driver.get(url)  # 访问url

@@ -12,7 +12,7 @@ if __name__ == '__main__':
         test.huiLvWeiHu()               #执行 汇率维护
 
         #以下为账单模块调用方法，同行账单为该模块的入口
-        test.tongHangZhangDan()     #执行同行账单
+        #test.tongHangZhangDan()     #执行同行账单
         # test.yiErJiJiJianZhangDan()     #执行一二级寄件账单
         # test.yiErJiPaiJianZhangDan()    #执行一二级派件账单
         # test.zhangDanBianJi()   #执行账单编辑
